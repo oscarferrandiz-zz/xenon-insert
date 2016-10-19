@@ -1,0 +1,81 @@
+<link rel="import" href="../polymer/polymer.html">
+
+<!--
+`xenon-insert`
+Insert polymer element for using with xenon-modal
+
+@demo demo/index.html
+-->
+
+<dom-module id="xenon-insert">
+  <template>
+    <style>
+
+      :host {
+        display: block;
+      }
+
+    </style>
+
+    <form on-submit="_acceptCb">
+      <input type="text" id="text" name="text">
+      <button type="submit">[[acceptText]]</button>
+      <button type="button" on-click="_cancelCb">[[cancelText]]</button>
+    </form>
+
+
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'xenon-insert',
+
+      properties: {
+
+        acceptText: {
+          type: String,
+          value: 'Ok'
+        },
+
+        cancelText: {
+          type: String,
+          value: 'Cancel'
+        },
+
+        modal: {
+          type: Object
+        },
+
+        acceptCb: {
+          type: Object
+        },
+
+        cancelCb: {
+          type: Object,
+          value: function() {
+            return function() {
+              this.get('modal').close();
+            }
+          }
+        }
+
+      },
+
+      _acceptCb: function(evt) {
+
+        evt.preventDefault();
+        var cb = this.get('acceptCb'),
+            text = this.$.text.value;
+
+        return cb && typeof cb === 'function' && cb.call(this, text);
+      },
+
+      _cancelCb: function() {
+        var text = this.$.text.value;
+        this.get('cancelCb').call(this, text);
+      }
+
+    });
+  </script>
+</dom-module>
